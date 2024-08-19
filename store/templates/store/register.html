@@ -8,6 +8,12 @@
     <form method="post" action="{% url 'store:register' %}">
         {% csrf_token %}
         {{ form.as_p }}
+        <div class="form-group">
+            {{ form.account_type.label_tag }} {{ form.account_type }}
+        </div>
+        <div class="form-group">
+            {{ form.account_password.label_tag }} {{ form.account_password }}
+        </div>
         <button type="submit" class="btn btn-primary">Register</button>
     </form>
 </div>

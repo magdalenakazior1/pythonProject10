@@ -4,6 +4,10 @@
 
 {% block content %}
 <h1 class="my-4">Profile</h1>
+
+<!-- Display account type -->
+<p><strong>Account Type:</strong> {{ account_type }}</p>
+
 <form method="post">
     {% csrf_token %}
     {{ user_form.as_p }}

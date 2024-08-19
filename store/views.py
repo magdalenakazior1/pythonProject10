@@ -70,7 +70,7 @@ def delete_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     cart_item.delete()
     messages.success(request, 'Item removed from cart.')
-    return redirect('store:view_cart')  # Updated to include 'store:' for namespacing
+    return redirect('store:view_cart')
 
 # Checkout view
 @login_required
@@ -192,6 +192,14 @@ def profile(request):
     user_form = UserForm(instance=request.user)
     profile_form = ProfileForm(instance=profile)
 
+    # Determine account type based on user permissions
+    if request.user.is_superuser:
+        account_type = "Administrator"
+    elif request.user.is_staff:
+        account_type = "Staff"
+    else:
+        account_type = "Regular User"
+
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, instance=profile)
@@ -201,14 +209,29 @@ def profile(request):
             messages.success(request, 'Your profile was successfully updated.')
             return redirect('store:profile')
 
-    return render(request, 'store/profile.html', {'user_form': user_form, 'profile_form': profile_form})
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'account_type': account_type,  # Pass the account type to the template
+    }
+
+    return render(request, 'store/profile.html', context)
 
 # User registration view
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            account_type = form.cleaned_data.get('account_type')
+
+            if account_type == 'admin':
+                user.is_superuser = True
+                user.is_staff = True
+            elif account_type == 'staff':
+                user.is_staff = True
+
+            user.save()
             login(request, user)
             messages.success(request, 'Registration successful. You are now logged in.')
             return redirect('store:home')
@@ -218,7 +241,7 @@ def register(request):
 
 # Custom login view
 class CustomLoginView(LoginView):
-    template_name = 'registration/login.html'
+    template_name = 'store/login.html'  # Updated to use your custom login template
 
     def get_success_url(self):
         messages.success(self.request, 'Login successful.')
@@ -226,12 +249,11 @@ class CustomLoginView(LoginView):
 
 # Custom logout view
 class CustomLogoutView(LogoutView):
-    template_name = 'registration/logout.html'
     next_page = reverse_lazy('store:home')  # Redirect to home page after logout
 
-    def post(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         messages.success(request, 'Logout was successful.')
-        return super().post(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 # Add category view (staff only)
 @login_required
