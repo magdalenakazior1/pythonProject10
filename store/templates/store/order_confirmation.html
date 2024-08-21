@@ -1,117 +1,81 @@
 <!-- store/templates/store/order_confirmation.html -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation - From Gamers 4 Gamers</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'store/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            color: #333;
-            margin: 0;
-        }
-
-        .header nav ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .header nav ul li {
-            margin: 0 15px;
-        }
-
-        .header nav ul li a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: 500;
-        }
-
-        .content {
-            text-align: center;
-        }
-
-        .content h2 {
-            font-size: 24px;
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-
-        .content p {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .content .order-number {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 40px;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #888;
-            font-size: 14px;
-        }
-
-        .footer p {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Order Confirmation</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'store:home' %}">Home</a></li>
-                    <li><a href="{% url 'store:product_list' %}">Products</a></li>
-                    <li><a href="{% url 'store:view_cart' %}">Cart</a></li>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'store:home' %}">From Gamers 4 Gamers</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:product_list' %}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:view_cart' %}">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:profile' %}">Profile</a>
+                    </li>
                 </ul>
-            </nav>
-        </header>
-        <div class="content">
-            <h2>Thank you for your order!</h2>
-            <p>Your order number is <span class="order-number">{{ order.id }}</span>.</p>
-            <p>We will notify you when your items are shipped.</p>
-        </div>
-        <footer class="footer">
-            <p>&copy; Magdalena and Jakub project 2024 SDA. All rights reserved.</p>
-        </footer>
-    </div>
-</body>
+            </div>
+        </nav>
+    </header>
 
+    <main class="container mt-5">
+        <div class="text-center">
+            <h1 class="display-4">Thank You for Your Purchase!</h1>
+            <p class="lead mt-4">Your order has been placed successfully and is now being processed.</p>
+            <hr class="my-4">
+            <p class="lead">Order Number: <strong>{{ order.id }}</strong></p>
+            <p class="lead">Expected Delivery Date: <strong>{{ order.delivery_date }}</strong></p>
+
+            <div class="mt-5">
+                <h2>Order Summary</h2>
+                <table class="table table-bordered mt-3">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.price|floatformat:2 }}</td>
+                            <td>${{ item.get_cost|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total Cost</strong></td>
+                            <td><strong>${{ order.get_total_cost|floatformat:2 }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <a href="{% url 'store:home' %}" class="btn btn-primary btn-lg mt-4">Continue Shopping</a>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white text-center p-3 mt-5">
+        <p>&copy; 2024 From Gamers 4 Gamers. All rights reserved.</p>
+    </footer>
+</body>
 </html>

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}From Gamers 4 Gamers{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -21,6 +21,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
+                    <!-- Search Bar -->
+                    <li class="nav-item">
+                        <form class="form-inline my-2 my-lg-0" action="{% url 'store:search_results' %}" method="get">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'store:home' %}">Home</a>
                     </li>
@@ -51,9 +56,12 @@
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
+                            <form method="post" action="{% url 'logout' %}" class="nav-link p-0 m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link nav-link p-0" style="color: inherit;">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -67,6 +75,8 @@
                             </a>
                         </li>
                     {% endif %}
+                        </form>
+                    </li>
                 </ul>
             </div>
         </nav>

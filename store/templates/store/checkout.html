@@ -6,40 +6,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - From Gamers 4 Gamers</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'store/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <header>
-        <h1>Checkout</h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'store:home' %}">Home</a></li>
-                <li><a href="{% url 'store:product_list' %}">Products</a></li>
-                <li><a href="{% url 'store:cart_detail' %}">Cart</a></li>
-            </ul>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'store:home' %}">From Gamers 4 Gamers</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:product_list' %}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:view_cart' %}">Cart</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
-    <main>
+    <main class="container mt-4">
+        <h1>Checkout</h1>
         <form method="post">
             {% csrf_token %}
             <section class="cart-items">
-                {% for item in cart_items %}
-                <div class="cart-item">
-                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                    <h2>{{ item.product.name }}</h2>
-                    <p>Quantity: {{ item.quantity }}</p>
-                    <p>Price: ${{ item.product.price }}</p>
-                    <p>Total: ${{ item.product.price|floatformat:2 }}</p>
-                </div>
-                {% endfor %}
-                <div class="cart-total">
-                    <h2>Total Price: ${{ total_price|floatformat:2 }}</h2>
-                </div>
+                {% if cart.items.exists %}
+                    {% for item in cart.items.all %}
+                    <div class="cart-item row mb-3">
+                        <div class="col-md-2">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.png' %}" alt="No Image" class="img-fluid">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h2>{{ item.product.name }}</h2>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Price: ${{ item.price }}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Total: ${{ item.get_total_price|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="cart-total text-right">
+                        <h3>Total Price: ${{ cart.get_total_cost|floatformat:2 }}</h3>
+                    </div>
+                {% else %}
+                    <p>Your cart is empty.</p>
+                {% endif %}
             </section>
-            <button type="submit">Place Order</button>
+            <button type="submit" class="btn btn-success">Place Order</button>
         </form>
     </main>
-    <footer>
+    <footer class="bg-dark text-white text-center p-3 mt-4">
         <p>&copy; Magdalena and Jakub project 2024 SDA. All rights reserved.</p>
     </footer>
 </body>

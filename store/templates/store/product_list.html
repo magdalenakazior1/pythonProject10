@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'store:styles.css' %}">
 </head>
 <body>
     <main class="container my-5">
@@ -31,9 +31,9 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    <img src="{{ product.image.url }}" class="custom-class-img" alt="{{ product.name }}">
                     {% else %}
-                    <img src="{% static 'images/default_image.jpg' %}" class="card-img-top" alt="Default Image">
+                    <img src="{% static 'images/default_image.jpg' %}" class="custom-class-img" alt="Default Image">
                     {% endif %}
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ product.name }}</h5>

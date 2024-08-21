@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Search Results</h1>
+    
+    {% if query %}
+        <p>Results for "<strong>{{ query }}</strong>":</p>
+    {% else %}
+        <p>No search query provided.</p>
+    {% endif %}
+    
+    {% if results %}
+        <div class="row">
+            {% for product in results %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        {% if product.image %}
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img class="card-img-top" src="{% static 'images/default_product_image.jpg' %}" alt="Default Image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                            <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No products found matching your query.</p>
+    {% endif %}
+</div>
+{% endblock %}

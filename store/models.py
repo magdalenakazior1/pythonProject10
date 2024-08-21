@@ -25,7 +25,7 @@ class Profile(models.Model):
     state = models.CharField(max_length=50, blank=True, null=True)
     zipcode = models.CharField(max_length=10, blank=True, null=True)
     country = models.CharField(max_length=50, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)  # Increase the length here
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -77,8 +77,6 @@ class Order(models.Model):
 
     def get_total_cost(self):
         return sum(item.get_cost() for item in self.items.all())
-
-
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
